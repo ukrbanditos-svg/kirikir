@@ -1,8 +1,15 @@
 package com.kirikir.player.runtime
 
+import android.os.Bundle
 import org.tvp.kirikiri2.KR2Activity
 
 class KirikiroidRuntimeActivity : KR2Activity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        RuntimeTrace.mark(this, "runtime-activity:before-super")
+        super.onCreate(savedInstanceState)
+        RuntimeTrace.mark(this, "runtime-activity:after-super")
+    }
+
     override fun getStoragePath(): Array<String> {
         val gamePath = intent?.getStringExtra(EXTRA_GAME_PATH)
         return if (!gamePath.isNullOrBlank()) arrayOf(gamePath) else super.getStoragePath()
