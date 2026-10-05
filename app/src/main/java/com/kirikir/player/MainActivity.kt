@@ -11,6 +11,7 @@ import com.kirikir.player.games.*
 import com.kirikir.player.runtime.GameStager
 import com.kirikir.player.runtime.NativeKirikiriBridge
 import com.kirikir.player.runtime.KirikiroidRuntimeActivity
+import com.kirikir.player.runtime.RuntimeTrace
 import kotlin.concurrent.thread
 
 class MainActivity:AppCompatActivity(){
@@ -34,6 +35,17 @@ class MainActivity:AppCompatActivity(){
         binding.addGameButton.setOnClickListener{chooseFolder.launch(null)}
         binding.launchGameButton.setOnClickListener{stageAndProbe()}
         render(store.load())
+    }
+
+
+    override fun onResume(){
+        super.onResume()
+        val trace=RuntimeTrace.read(this)
+        if(!trace.isNullOrBlank()){
+            val g=currentGame?:store.load()
+            render(g)
+            binding.statusText.append("\n\nПоследний этап runtime:\n$trace")
+        }
     }
 
     private fun importGame(u:Uri){
@@ -67,6 +79,8 @@ class MainActivity:AppCompatActivity(){
                         val probe=NativeKirikiriBridge.nativeProbeGame(gameDir.absolutePath)
                         binding.statusText.text=when(probe){
                             1->{
+                                RuntimeTrace.clear(this)
+                                RuntimeTrace.mark(this,"launcher:starting-runtime")
                                 binding.statusText.text="Игра подготовлена ✓\nЗапускаю Kirikiroid2…"
                                 val intent=Intent(this,KirikiroidRuntimeActivity::class.java)
                                     .putExtra(KirikiroidRuntimeActivity.EXTRA_GAME_PATH,gameDir.absolutePath)
