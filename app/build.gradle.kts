@@ -42,7 +42,7 @@ android {
 dependencies {
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.activity:activity-ktx:1.8.2")
+    implementation("androidx.activity:activity-ktx:1.7.2")
     implementation("androidx.documentfile:documentfile:1.0.1")
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 }
