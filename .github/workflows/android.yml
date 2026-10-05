@@ -40,24 +40,7 @@ jobs:
             cp external/k2src/cocos2d/cocos/platform/android/java/libs/*.jar app/libs/
           fi
           sed -i 's/System.exit(0);//g' app/src/main/java/org/tvp/kirikiri2/KR2Activity.java
-          python3 - <<'PY'
-from pathlib import Path
-p = Path("app/src/main/java/org/cocos2dx/lib/Cocos2dxActivity.java")
-s = p.read_text()
-old = '''        if (!isTaskRoot()) {
-            // Android launched another instance of the root activity into an existing task
-            //  so just quietly finish and go away, dropping the user back into the activity
-            //  at the top of the stack (ie: the last state of this task)
-            finish();
-            Log.w(TAG, "[Workaround] Ignore the activity started from icon!");
-            return;
-        }
-
-'''
-if old not in s:
-    raise SystemExit("isTaskRoot workaround block not found")
-p.write_text(s.replace(old, ""))
-PY
+          python3 -c 'from pathlib import Path; p=Path("app/src/main/java/org/cocos2dx/lib/Cocos2dxActivity.java"); s=p.read_text(); a=s.index("        if (!isTaskRoot()) {"); b=s.index("        this.hideVirtualButton();", a); p.write_text(s[:a]+s[b:])'
           cp external/kr2/LICENSE app/src/main/assets/KIRIKIRROID2_LICENSE.txt
 
       - name: Set up JDK 17
