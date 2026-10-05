@@ -1,0 +1,3 @@
+package com.kirikir.player.games
+import android.content.Context
+class GameStore(context:Context){private val prefs=context.getSharedPreferences("games",Context.MODE_PRIVATE);fun save(g:GameInfo){prefs.edit().putString("rootUri",g.rootUri).putString("name",g.name).putStringSet("xp3",g.xp3Files.toSet()).apply()};fun load():GameInfo?{val u=prefs.getString("rootUri",null)?:return null;return GameInfo(prefs.getString("name","KiriKiri game")?:"KiriKiri game",u,prefs.getStringSet("xp3",emptySet()).orEmpty().sorted())}}
