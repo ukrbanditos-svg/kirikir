@@ -10,6 +10,7 @@ import com.kirikir.player.databinding.ActivityMainBinding
 import com.kirikir.player.games.*
 import com.kirikir.player.runtime.GameStager
 import com.kirikir.player.runtime.NativeKirikiriBridge
+import com.kirikir.player.runtime.KirikiroidRuntimeActivity
 import kotlin.concurrent.thread
 
 class MainActivity:AppCompatActivity(){
@@ -65,10 +66,13 @@ class MainActivity:AppCompatActivity(){
                     }else{
                         val probe=NativeKirikiriBridge.nativeProbeGame(gameDir.absolutePath)
                         binding.statusText.text=when(probe){
-                            1->"Игра подготовлена ✓\n"+gameDir.absolutePath+
-                                "\n\nNative runtime загружен: "+
-                                NativeKirikiriBridge.nativeVersion()+
-                                "\nXP3 обнаружен."
+                            1->{
+                                binding.statusText.text="Игра подготовлена ✓\nЗапускаю Kirikiroid2…"
+                                val intent=Intent(this,KirikiroidRuntimeActivity::class.java)
+                                    .putExtra(KirikiroidRuntimeActivity.EXTRA_GAME_PATH,gameDir.absolutePath)
+                                startActivity(intent)
+                                "Игра подготовлена ✓"
+                            }
                             0->"Runtime загружен, но XP3 не найден."
                             else->"Native runtime вернул код $probe."
                         }
