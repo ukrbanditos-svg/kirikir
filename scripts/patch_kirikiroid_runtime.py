@@ -103,3 +103,12 @@ replacement = (
 )
 s = s.replace(needle, replacement)
 p.write_text(s)
+
+# The Renovation libgame.so predates this newer Cocos2d JNI hook.
+p = Path("app/src/main/java/org/cocos2dx/lib/Cocos2dxHelper.java")
+s = p.read_text()
+s = s.replace(
+    "    private static native void nativeSetAudioDeviceInfo(boolean isSupportLowLatency, int deviceSampleRate, int audioBufferSizeInFames);",
+    "    private static void nativeSetAudioDeviceInfo(boolean isSupportLowLatency, int deviceSampleRate, int audioBufferSizeInFames) { }",
+)
+p.write_text(s)
