@@ -21,6 +21,7 @@ jobs:
           mkdir -p external
           git clone --depth 1 https://github.com/miscdec/Kirikiroid2Renovation.git external/kr2
           git clone --depth 1 --branch new https://github.com/joiplay/Kirikiroid2.git external/k2src
+          find external -name gradle-wrapper.jar -delete
 
           mkdir -p app/src/main/java/org/tvp/kirikiri2
           mkdir -p app/src/main/java/com/amaze/filemanager/filesystem
