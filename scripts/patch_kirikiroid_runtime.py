@@ -112,3 +112,26 @@ s = s.replace(
     "    private static void nativeSetAudioDeviceInfo(boolean isSupportLowLatency, int deviceSampleRate, int audioBufferSizeInFames) { }",
 )
 p.write_text(s)
+
+# Old Cocos can call nativeOnResume before nativeInit/onSurfaceCreated.
+p = Path("app/src/main/java/org/cocos2dx/lib/Cocos2dxRenderer.java")
+s = p.read_text()
+old = """    public void handleOnResume() {
+        Cocos2dxHelper.onEnterForeground();
+        Cocos2dxRenderer.nativeOnResume();
+    }
+"""
+new = """    public void handleOnResume() {
+        if (!mNativeInitCompleted) {
+            RuntimeTrace.mark(Cocos2dxActivity.getContext(), "renderer:resume-before-nativeInit-skipped");
+            return;
+        }
+        RuntimeTrace.mark(Cocos2dxActivity.getContext(), "renderer:before-nativeOnResume");
+        Cocos2dxHelper.onEnterForeground();
+        Cocos2dxRenderer.nativeOnResume();
+        RuntimeTrace.mark(Cocos2dxActivity.getContext(), "renderer:after-nativeOnResume");
+    }
+"""
+if old not in s:
+    raise SystemExit("handleOnResume block not found")
+p.write_text(s.replace(old, new))
