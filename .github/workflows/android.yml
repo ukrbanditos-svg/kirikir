@@ -40,6 +40,7 @@ jobs:
             cp external/k2src/cocos2d/cocos/platform/android/java/libs/*.jar app/libs/
           fi
           sed -i 's/System.exit(0);//g' app/src/main/java/org/tvp/kirikiri2/KR2Activity.java
+          python3 -c 'from pathlib import Path; p=Path("app/src/main/java/org/tvp/kirikiri2/KR2Activity.java"); s=p.read_text(); a=s.index("    static public String getDeviceId() {"); b=s.index("    static public KR2Activity sInstance;", a); repl="    static public String getDeviceId() {\n        try {\n            String androidId = Secure.getString(GetInstance().getContentResolver(), Secure.ANDROID_ID);\n            if (androidId != null && !androidId.isEmpty()) return \"AndroidID:\" + androidId;\n        } catch (Throwable ignored) {}\n        return \"AndroidID:unknown\";\n    }\n\n"; p.write_text(s[:a]+repl+s[b:])'
           python3 -c 'from pathlib import Path; p=Path("app/src/main/java/org/cocos2dx/lib/Cocos2dxActivity.java"); s=p.read_text(); a=s.index("        if (!isTaskRoot()) {"); b=s.index("        this.hideVirtualButton();", a); p.write_text(s[:a]+s[b:])'
           cp external/kr2/LICENSE app/src/main/assets/KIRIKIRROID2_LICENSE.txt
 
